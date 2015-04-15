@@ -82,7 +82,7 @@
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-  use_keys=[ "host", "num_cpus", "mem_total", "osfinger", "biosversion", "kernelrelease", "function", "fqdn", "date_created", "date_last_seen", "status"];
+  use_keys=[ "host", "num_cpus", "mem_total", "os", "biosversion", "kernelrelease", "function", "fqdn", "date_created", "date_last_seen", "status"];
   function show_data(d) {
     itxt='<div class="panel-heading" style="width:100%;">' + d.host + '</div><div class="panel-body"><table class="table table-striped"><tbody>';
     use_keys.forEach(function (key) {
