@@ -82,7 +82,7 @@
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-  use_keys=[ "host", "num_cpus", "mem_total", "osfinger", "biosversion", "kernelrelease", "function", "fqdn", "date_created", "date_last_seen"];
+  use_keys=[ "host", "num_cpus", "mem_total", "osfinger", "biosversion", "kernelrelease", "function", "fqdn", "date_created", "date_last_seen", "status"];
   function show_data(d) {
     itxt='<div class="panel-heading" style="width:100%;">' + d.host + '</div><div class="panel-body"><table class="table table-striped"><tbody>';
     use_keys.forEach(function (key) {
@@ -115,7 +115,24 @@
 
     nodeEnter.append("circle")
         .attr("r", 1e-6)
-        .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+        .style("fill", function(d) { 
+          if (d._children) {
+            return "lightsteelblue";
+          }
+          else {
+            if (typeof d.status !== 'undefined') {
+              if (d.status == "up") {
+                return "green";
+              }
+              else {
+                return "red";
+              }
+            }
+            else {
+              return "#fff"; 
+            }
+          }
+        });
 
     /* then tack on the name */
     nodeEnter.append("text")
@@ -132,9 +149,34 @@
         .duration(duration)
         .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
 
+    /*
     nodeUpdate.select("circle")
         .attr("r", 8)
         .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+    */
+
+    nodeEnter.select("circle")
+        .attr("r", 8)
+        .style("fill", function(d) { 
+          if (d._children) {
+            return "lightsteelblue";
+          }
+          else {
+            if (d.status) {
+              if (d.status == "up") {
+                return "green";
+              }
+              else {
+                return "red";
+              }
+            }
+            else {
+              return "#fff"; 
+            }
+          }
+        });
+
+
 
     nodeUpdate.select("text")
         .style("fill-opacity", 1);
