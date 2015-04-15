@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HostMGR</title>
+  <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+
+    .node {
+      cursor: pointer;
+    }
+
+    .node circle {
+      fill: #fff;
+      stroke: steelblue;
+      stroke-width: 2px;
+    }
+
+    .node text { font: 12px sans-serif; }
+
+    .link {
+      fill: none;
+      stroke: #ccc;
+      stroke-width: 1px;
+    }
+  </style>
+
+</head>
+
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Host View</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+
+    </div><!--/.navbar-collapse -->
+  </div>
+</nav>
+
+<div class="container">
+  <div class="row">
+    <div id="svg_loc" class="col-xs-12 col-sm-6 col-md-8"></div>
+    <div id="data_pane" class="col-xs-6 col-md-4 panel panel-default" style="margin-top:60px;overflow:auto"></div>
+  </div>
+
+<!-- load the d3.js library -->
+<script src="js/d3.v3.min.js"></script>
+<script src="js/jquery.js"></script>
+<script>
+  var remoteUrl="/data.json";
+  var treeData;
+  var root;
+  var duration=750;
+
+  // ************** Generate the tree diagram	 *****************
+  var margin = {top: 60, right: 120, bottom: 20, left: 100},
+      width = 700 - margin.right - margin.left,
+      height = 700 - margin.top - margin.bottom;
+
+  var i = 0;
+
+  var tree = d3.layout.tree()
+      .size([height, width]);
+
+  var diagonal = d3.svg.diagonal()
+      .projection(function(d) { return [d.y, d.x]; });
+
+  var svg = d3.select("#svg_loc").append("svg")
+      .attr("width", width + margin.right + margin.left)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+  use_keys=[ "host", "num_cpus", "mem_total", "osfinger", "biosversion", "kernelrelease", "function", "fqdn", "date_created", "date_last_seen"];
+  function show_data(d) {
+    itxt='<div class="panel-heading" style="width:100%;">' + d.host + '</div><div class="panel-body"><table class="table table-striped"><tbody>';
+    use_keys.forEach(function (key) {
+      itxt += "<tr><td>" + key + "</td><td>" + d[key] + "</td></tr>";
+    });
+    itxt += "</tbody></table></div>";
+
+    $("#data_pane").html(itxt);
+  }
+
+  var tree_expansion_factor=80;  // default 180
+  function update(source) {
+
+    // Compute the new tree layout.
+    var nodes = tree.nodes(root).reverse(),
+        links = tree.links(nodes);
+
+    // Normalize for fixed-depth.
+    nodes.forEach(function(d) { d.y = d.depth * tree_expansion_factor; });
+
+    // Update the nodes…
+    var node = svg.selectAll("g.node")
+        .data(nodes, function(d) { return d.id || (d.id = ++i); });
+
+    // Enter any new nodes at the parent's previous position.
+    var nodeEnter = node.enter().append("g")
+        .attr("class", "node")
+        .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
+        .on("click", click);
+
+    nodeEnter.append("circle")
+        .attr("r", 1e-6)
+        .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+
+    /* then tack on the name */
+    nodeEnter.append("text")
+        .attr("x", function(d) { return d.children || d._children ? -10 : 10; })
+        .attr("dy", ".35em")
+        .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
+        .text(function(d) { return d.num_cpus ? d.name + " -- cpus:" + d.num_cpus + " mem:" + d.mem_total : d.name; })
+        .style("fill-opacity", 1e-6);
+
+
+
+    // Transition nodes to their new position.
+    var nodeUpdate = node.transition()
+        .duration(duration)
+        .attr("transform", function(d) { return "translate(" + d.y + "," + d.x + ")"; });
+
+    nodeUpdate.select("circle")
+        .attr("r", 8)
+        .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
+
+    nodeUpdate.select("text")
+        .style("fill-opacity", 1);
+
+    // Transition exiting nodes to the parent's new position.
+    var nodeExit = node.exit().transition()
+        .duration(duration)
+        .attr("transform", function(d) { return "translate(" + source.y + "," + source.x + ")"; })
+        .remove();
+
+    nodeExit.select("circle")
+        .attr("r", 1e-6);
+
+    nodeExit.select("text")
+        .style("fill-opacity", 1e-6);
+
+    // Update the links…
+    var link = svg.selectAll("path.link")
+        .data(links, function(d) { return d.target.id; });
+
+    // Enter any new links at the parent's previous position.
+    link.enter().insert("path", "g")
+        .attr("class", "link")
+        .attr("d", function(d) {
+          var o = {x: source.x0, y: source.y0};
+          return diagonal({source: o, target: o});
+        });
+
+    // Transition links to their new position.
+    link.transition()
+        .duration(duration)
+        .attr("d", diagonal);
+
+    // Transition exiting nodes to the parent's new position.
+    link.exit().transition()
+        .duration(duration)
+        .attr("d", function(d) {
+          var o = {x: source.x, y: source.y};
+          return diagonal({source: o, target: o});
+        })
+        .remove();
+
+    // Stash the old positions for transition.
+    nodes.forEach(function(d) {
+      d.x0 = d.x;
+      d.y0 = d.y;
+    });
+  }
+
+  // Toggle children on click.
+  function click(d) {
+    if (d.fqdn) {
+      show_data(d);
+      return;
+    }
+    if (d != root && !d.fqdn) {
+      root.children.forEach(hide);
+      $("#data_pane").html("");
+    }
+    collapse(d);
+    update(d);
+  }
+
+  function hide(d) {
+     if (d.children) {
+      d._children = d.children;
+      d.children = null;
+    }
+  }
+
+  function collapse(d) {
+    if (d.children) {
+      d._children = d.children;
+      d.children = null;
+    } else {
+      d.children = d._children;
+      d._children = null;
+    }
+  }
+
+  function getData(){
+    $.ajax({
+      url: remoteUrl,
+      dataType: 'json',
+      cache: true,
+      timeout: 90000,
+      success: function(data) {
+        treeData = data;
+        root = treeData[0];
+        root.children.forEach(collapse);
+        collapse(root);
+        update(root);
+      },
+      error: function(){
+        $('#alertmsg').text("Server took too long to respond.")
+        //setTimeout(getData(), 15000);
+      }
+    });
+  }
+
+  getData();
+</script>
+  </div>
+<script src="bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+[ {
+  "name": "prod",
+  "parent": "null",
+  "children": [
+    {
+    "name": "web",
+    "parent": "prod",
+    "children": [
+      {
+      "function": "web",
+      "biosversion": "2.2.2",
+      "name": "prod-web-001",
+      "parent": "web",
+      "kernelrelease": "3.13.0-37-generic",
+      "num_cpus": 24,
+      "fqdn": "prod-web-001.priv.gnslngr.us",
+      "host": "prod-web-001",
+      "mem_total": 64382,
+      "date_created": "2015-04-07 09:33:51",
+      "os": "ubuntu-14.04",
+      "date_last_seen": "2015-04-07 09:34:07"
+      },
+      {
+      "function": "web",
+      "biosversion": "2.2.2",
+      "name": "prod-web-002",
+      "parent": "web",
+      "kernelrelease": "3.13.0-37-generic",
+      "num_cpus": 24,
+      "fqdn": "prod-web-002.priv.gnslngr.us",
+      "host": "prod-web-002",
+      "mem_total": 64382,
+      "date_created": "2015-04-07 09:33:51",
+      "os": "ubuntu-14.04",
+      "date_last_seen": "2015-04-07 09:34:07"
+      },
+      {
+      "function": "web",
+      "biosversion": "2.2.2",
+      "name": "prod-web-003",
+      "parent": "web",
+      "kernelrelease": "3.13.0-37-generic",
+      "num_cpus": 24,
+      "fqdn": "prod-web-003.priv.gnslngr.us",
+      "host": "prod-web-003",
+      "mem_total": 64382,
+      "date_created": "2015-04-07 09:33:51",
+      "os": "ubuntu-14.04",
+      "date_last_seen": "2015-04-07 09:34:07"
+      }
+    ]
+    },
+    {
+   "name": "mysql",
+    "parent": "prod",
+    "children": [
+      {
+        "function": "mysql",
+        "biosversion": "2.2.2",
+        "name": "prod-mysql-001",
+        "parent": "mysql",
+        "kernelrelease": "3.13.0-37-generic",
+        "num_cpus": 24,
+        "fqdn": "prod-mysql-001.priv.gnslngr.us",
+        "host": "prod-mysq-001",
+        "mem_total": 64382,
+        "date_created": "2015-04-07 09:33:51",
+        "osfinger": "ubuntu-14.04",
+        "date_last_seen": "2015-04-07 09:34:07"
+     },
+      {
+        "function": "mysql",
+        "biosversion": "2.2.2",
+        "name": "prod-mysql-002",
+        "parent": "mysql",
+        "kernelrelease": "3.13.0-37-generic",
+        "num_cpus": 24,
+        "fqdn": "prod-mysql-002.priv.gnslngr.us",
+        "host": "prod-mysq-002",
+        "mem_total": 64382,
+        "date_created": "2015-04-07 09:33:51",
+        "osfinger": "ubuntu-14.04",
+        "date_last_seen": "2015-04-07 09:34:07"
+     }
+    ]
+    },
+    {
+    "name": "redis",
+    "parent": "prod",
+    "children": [
+     {
+      "function": "redis",
+      "biosversion": "2.2.2",
+      "name": "prod-redis-001",
+      "parent": "redis",
+      "kernelrelease": "3.13.0-37-generic",
+      "num_cpus": 24,
+      "fqdn": "prod-redis-001.priv.gnslngr.us",
+      "host": "prod-redis-001",
+      "mem_total": 64382,
+      "date_created": "2015-04-07 09:33:51",
+      "osfinger": "ubuntu-14.04",
+      "date_last_seen": "2015-04-07 09:34:07"
+      },
+     {
+      "function": "redis",
+      "biosversion": "2.2.2",
+      "name": "prod-redis-002",
+      "parent": "redis",
+      "kernelrelease": "3.13.0-37-generic",
+      "num_cpus": 24,
+      "fqdn": "prod-redis-002.priv.gnslngr.us",
+      "host": "prod-redis-002",
+      "mem_total": 64382,
+      "date_created": "2015-04-07 09:33:51",
+      "osfinger": "ubuntu-14.04",
+      "date_last_seen": "2015-04-07 09:34:07"
+      }
+    ]
+    }
+  ]
+}] 
