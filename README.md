@@ -6,3 +6,8 @@ The idea is that we've got Chef's Ohai data or Saltstack's grains containing all
 TODO:
 
 Show a represenation (N up, N down) at the group level before clicking down to the actual host level.
+
+
+Reference:
+
+All props to (this link)[http://www.d3noob.org/2014/01/tree-diagrams-in-d3js_11.html] for the tree d3 stuff.
